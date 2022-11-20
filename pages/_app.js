@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { FormProvider, useForm } from "react-hook-form";
 import { LoginUser } from "../components/templates/LoginUser";
 import { NotLoginUser } from "../components/templates/NotLoginUser";
 import { AuthProvider } from "../provider/AuthProvider";
@@ -6,11 +7,14 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+  const methods = useForm();
   if (router.pathname === "/Login" || router.pathname === "/signUp") {
     return (
       <AuthProvider>
         <LoginUser>
-          <Component {...pageProps} />
+          <FormProvider {...methods}>
+            <Component {...pageProps} />
+          </FormProvider>
         </LoginUser>
       </AuthProvider>
     );
@@ -18,7 +22,9 @@ function MyApp({ Component, pageProps }) {
     return (
       <AuthProvider>
         <NotLoginUser>
-          <Component {...pageProps} />
+          <FormProvider {...methods}>
+            <Component {...pageProps} />
+          </FormProvider>
         </NotLoginUser>
       </AuthProvider>
     );

@@ -5,6 +5,10 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { app } from "../firebase";
+import InputForm from "../components/atoms/InputForm";
+import FormButton from "../components/atoms/button/FormButton";
+import { signUpUser } from "../lib/api/user";
+import { useFormContext } from "react-hook-form";
 
 const SignUp = () => {
   const auth = getAuth(app);
@@ -13,6 +17,11 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = useFormContext();
 
   const [error, setError] = useState("");
 
@@ -23,8 +32,23 @@ const SignUp = () => {
     setNewUser({ ...newUser, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleonSubmit = () => {
+    const request = async () => {
+      await signUpEmail();
+      if (auth.currentUser) {
+        const token = await auth.currentUser.getIdToken(true);
+        const config = { token };
+        try {
+          await signUpUser(config);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    };
+    request();
+  };
+
+  const signUpEmail = async () => {
     try {
       await createUserWithEmailAndPassword(
         auth,
@@ -44,40 +68,18 @@ const SignUp = () => {
     <>
       <h1>SignUp</h1>
       {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="name"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">email:</label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            placeholder="email"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="password"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <button type="submit">SignUp</button>
-        </div>
+      <form onSubmit={handleSubmit(handleonSubmit)}>
+        <InputForm title="name" type="text" handleChange={handleChange} />
+        {errors.name && <p>nameを入力してください</p>}
+        <InputForm title="email" type="text" handleChange={handleChange} />
+        {errors.email && <p>emailを入力してください</p>}
+        <InputForm
+          title="password"
+          type="password"
+          handleChange={handleChange}
+        />
+        {errors.password && <p>passwordを入力してください</p>}
+        <FormButton type="submit" children="SignUp" />
       </form>
     </>
   );
