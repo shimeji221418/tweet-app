@@ -2,40 +2,41 @@ import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { app } from "../../firebase";
-import { getUsers } from "../../lib/api/user";
+import { getPosts } from "../../lib/api/post";
 
-const Users = () => {
+const Posts = () => {
   const auth = getAuth(app);
   const router = useRouter();
-  const [userList, setUserList] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUserList = async () => {
+    const getAllPosts = async () => {
       try {
         const currentUser = auth.currentUser;
         const token = await currentUser.getIdToken(true);
         const config = { headers: { authorization: `Bearer ${token}` } };
-        const res = await getUsers(config);
+        const res = await getPosts(config);
         console.log(res.data);
-        setUserList(res.data);
+        setPosts(res.data);
         setLoading(false);
       } catch (e) {
-        console.log(e.errors);
-        setLoading(false);
+        console.log(e);
       }
     };
-    getUserList();
+    getAllPosts();
   }, []);
 
   return (
     <>
-      <h1>Users</h1>
+      <h1>Posts</h1>
       {!loading &&
-        userList.map((user) => {
+        posts.map((post) => {
           return (
-            <ul key={user.id}>
-              <li>{user.name}</li>
+            <ul key={post.id}>
+              <li>
+                {post.title} by:{post.user.name}
+              </li>
             </ul>
           );
         })}
@@ -43,4 +44,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Posts;

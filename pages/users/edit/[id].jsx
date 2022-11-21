@@ -37,10 +37,13 @@ const Edit = () => {
           const token = await currentUser.getIdToken(true);
           const config = { headers: { authorization: `Bearer ${token}` } };
           const res = await getSelectUser(routeId, config);
+          if (auth.currentUser.uid !== res.data.uid) {
+            router.replace("/users");
+          }
           setEditUser({
-            name: res.data.data.name,
-            email: res.data.data.email,
-            uid: res.data.data.uid,
+            name: res.data.name,
+            email: res.data.email,
+            uid: res.data.uid,
           });
           setLoading(false);
         }

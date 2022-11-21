@@ -1,10 +1,10 @@
-import { getAuth } from "firebase/auth";
+import { deleteUser, getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import PrimaryButton from "../../components/atoms/button/PrimaryButton";
 import { app } from "../../firebase";
 import { getSelectUser } from "../../lib/api/user";
-import { deleteUser } from "../../lib/api/user";
+import { deleteSelectUser } from "../../lib/api/user";
 
 const User = () => {
   const router = useRouter();
@@ -21,7 +21,8 @@ const User = () => {
           const token = await currentUser.getIdToken(true);
           const config = { headers: { authorization: `Bearer ${token}` } };
           const res = await getSelectUser(routeId, config);
-          setSelectUser(res.data.data);
+          setSelectUser(res.data);
+          console.log(res.data);
           setLoading(false);
         }
       } catch (e) {
@@ -38,17 +39,34 @@ const User = () => {
       const currentUser = auth.currentUser;
       const token = await currentUser.getIdToken(true);
       const config = { headers: { authorization: `Bearer ${token}` } };
-      const res = await deleteUser(id, config);
+      const res = await deleteSelectUser(id, config);
       console.log(res.data.data);
+      await deleteCurrentUser();
       router.push(`/users`);
     } catch (e) {
       console.log(e);
     }
   };
 
+  const deleteCurrentUser = async () => {
+    const user = auth.currentUser;
+    try {
+      await deleteUser(user);
+    } catch (e) {
+      console(e);
+    }
+  };
+
   return (
     <>
       <h1>User</h1>
+      {auth.currentUser.uid === selectUser.uid && (
+        <PrimaryButton
+          onClick={() => router.push(`/users/edit/${selectUser.id}`)}
+        >
+          update
+        </PrimaryButton>
+      )}
       {loading ? (
         <p>Loading...</p>
       ) : (
