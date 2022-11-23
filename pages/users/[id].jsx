@@ -40,7 +40,7 @@ const User = () => {
       const token = await currentUser.getIdToken(true);
       const config = { headers: { authorization: `Bearer ${token}` } };
       const res = await deleteSelectUser(id, config);
-      console.log(res.data.data);
+      console.log(res.data);
       await deleteCurrentUser();
       router.push(`/users`);
     } catch (e) {
