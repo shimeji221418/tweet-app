@@ -62,7 +62,7 @@ const Edit = () => {
       const token = await currentUser.getIdToken(true);
       const config = { headers: { authorization: `Bearer ${token}` } };
       const res = await updateUser(id, editUser, config);
-      console.log(res.data.data);
+      console.log(res.data);
       router.push("/users");
     } catch (e) {
       console.log(e);
