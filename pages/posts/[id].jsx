@@ -49,6 +49,14 @@ const Post = () => {
     <>
       <h1>Post Show</h1>
       {!loading && <p>{selectPost.body}</p>}
+      {selectPost.image && (
+        <img
+          src={selectPost.image.url}
+          alt="selectPostImage"
+          width="30%"
+          height="30%"
+        />
+      )}
       {!loading && auth.currentUser.uid === selectPost.user.uid && (
         <PrimaryButton onClick={handleDelete}>delete</PrimaryButton>
       )}

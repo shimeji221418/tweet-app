@@ -7,17 +7,19 @@ import InputForm from "../../components/atoms/InputForm";
 import TextArea from "../../components/atoms/TextArea";
 import { app } from "../../firebase";
 import { createPost } from "../../lib/api/post";
-import { getUsers } from "../../lib/api/user";
+import { getCurrentUser } from "../../lib/api/user";
 
 const New = () => {
   const router = useRouter();
   const auth = getAuth(app);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState("");
   const [post, setPost] = useState({
     title: "",
     body: "",
     user_id: "",
+    image: "",
   });
 
   const {
@@ -32,16 +34,37 @@ const New = () => {
     setPost({ ...post, [name]: value });
   };
 
+  const uploadImage = (e) => {
+    const name = e.target.name;
+    const file = e.target.files[0];
+    setPost({ ...post, [name]: file });
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+  };
+
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("post[title]", post.title);
+    formData.append("post[body]", post.body);
+    formData.append("post[image]", post.image ? post.image : "");
+    formData.append("user_id", post.user_id);
+
+    return formData;
+  };
+
   const handleonSubmit = async () => {
     try {
       const currentUser = auth.currentUser;
       const token = await currentUser.getIdToken(true);
-      const config = { headers: { authorization: `Bearer ${token}` } };
-      const loginUser = user.find((user) => user.uid === currentUser.uid);
-      const id = loginUser.id;
-      setPost({ ...post, user_id: id });
-      console.log(post);
-      const res = await createPost(post, config);
+      const config = {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Context-Type": "multipart/form-data",
+        },
+      };
+      const data = createFormData();
+      const res = await createPost(data, config);
       router.push("/posts");
       console.log(res.data);
     } catch (e) {
@@ -54,8 +77,11 @@ const New = () => {
       try {
         const currentUser = auth.currentUser;
         const token = await currentUser.getIdToken(true);
-        const config = { headers: { authorization: `Bearer ${token}` } };
-        const res = await getUsers(config);
+        const config = {
+          headers: { authorization: `Bearer ${token}` },
+          params: { uid: currentUser.uid },
+        };
+        const res = await getCurrentUser(config);
         setUser(res.data);
         console.log(res.data);
         setLoading(false);
@@ -67,12 +93,8 @@ const New = () => {
   }, []);
 
   useEffect(() => {
-    const loginUser = user.find((user) => user.uid === auth.currentUser.uid);
-    if (loginUser) {
-      const id = loginUser.id;
-      setPost({ ...post, user_id: id });
-      console.log(loginUser.id);
-    }
+    setPost({ ...post, user_id: user.id });
+    console.log(post);
   }, [user]);
 
   return (
@@ -92,9 +114,17 @@ const New = () => {
             handleChange={handleChange}
             value={post.body}
           />
-          {errors.title && <p>bodyを入力してください</p>}
+          {errors.body && <p>bodyを入力してください</p>}
+          <label htmlFor="image">image:</label>
+          <input id="image" name="image" type="file" onChange={uploadImage} />
           <FormButton type="submit">submit</FormButton>
         </form>
+      )}
+      {preview && (
+        <>
+          <p>preview</p>
+          <img src={preview} alt="preview img" width="30%" height="30%" />
+        </>
       )}
     </>
   );
