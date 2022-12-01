@@ -14,7 +14,9 @@ const EditPost = () => {
   const [editPost, setEditPost] = useState({
     title: "",
     body: "",
+    image: "",
   });
+  const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(true);
 
   const {
@@ -27,6 +29,25 @@ const EditPost = () => {
     const name = target.name;
     const value = target.value;
     setEditPost({ ...editPost, [name]: value });
+    console.log(editPost);
+  };
+
+  const uploadImage = (e) => {
+    const name = e.target.name;
+    const file = e.target.files[0];
+    setEditPost({ ...editPost, [name]: file });
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+  };
+
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("post[title]", editPost.title);
+    formData.append("post[body]", editPost.body);
+    formData.append("post[image]", editPost.image ? editPost.image : "");
+
+    return formData;
   };
 
   const handleonSubmit = async () => {
@@ -34,8 +55,14 @@ const EditPost = () => {
       const routeId = router.query.id;
       const currentUser = auth.currentUser;
       const token = await currentUser.getIdToken(true);
-      const config = { headers: { authorization: `Bearer ${token}` } };
-      const res = await updatePost(routeId, editPost, config);
+      const config = {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Context-Type": "multipart/form-data",
+        },
+      };
+      const data = createFormData();
+      const res = await updatePost(routeId, data, config);
       router.push("/posts");
       console.log(res.data);
     } catch (e) {
@@ -55,6 +82,7 @@ const EditPost = () => {
           setEditPost({
             title: res.data.title,
             body: res.data.body,
+            image: res.data.image,
           });
           console.log(res.data);
           setLoading(false);
@@ -83,8 +111,15 @@ const EditPost = () => {
             handleChange={handleChange}
           />
           {errors.body && <p>本文を入力してください</p>}
+          <input id="image" name="image" type="file" onChange={uploadImage} />
           <FormButton type="submit">submit</FormButton>
         </form>
+      )}
+      {preview && (
+        <>
+          <p>preview</p>
+          <img src={preview} alt="preview img" width="30%" height="30%" />
+        </>
       )}
     </>
   );
