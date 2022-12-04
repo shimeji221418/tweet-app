@@ -18,14 +18,34 @@ const Edit = () => {
     name: "",
     email: "",
     uid: "",
+    icon: "",
   });
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState("");
 
   const handleChange = (e) => {
     const target = e.target;
     const name = target.name;
     const value = target.value;
     setEditUser({ ...editUser, [name]: value });
+    console.log(editUser);
+  };
+
+  const uploadImage = (e) => {
+    const name = e.target.name;
+    const file = e.target.files[0];
+    setEditUser({ ...editUser, [name]: file });
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+  };
+
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("user[name]", editUser.name);
+    formData.append("user[icon]", editUser.icon ? editUser.icon : "");
+
+    return formData;
   };
 
   useEffect(() => {
@@ -44,6 +64,7 @@ const Edit = () => {
             name: res.data.name,
             email: res.data.email,
             uid: res.data.uid,
+            icon: res.data.icon,
           });
           setLoading(false);
         }
@@ -60,8 +81,14 @@ const Edit = () => {
       const id = router.query.id;
       const currentUser = auth.currentUser;
       const token = await currentUser.getIdToken(true);
-      const config = { headers: { authorization: `Bearer ${token}` } };
-      const res = await updateUser(id, editUser, config);
+      const config = {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Context-Type": "multipart/form-data",
+        },
+      };
+      const data = createFormData();
+      const res = await updateUser(id, data, config);
       console.log(res.data);
       router.push("/users");
     } catch (e) {
@@ -82,17 +109,15 @@ const Edit = () => {
           />
         )}
         {errors.name && <p>nameを入力してください</p>}
-        {!loading && (
-          <InputForm
-            title="email"
-            type="text"
-            value={editUser.email}
-            handleChange={handleChange}
-          />
-        )}
-        {errors.email && <p>emailを入力してください</p>}
+        <input id="icon" name="icon" type="file" onChange={uploadImage} />
         <FormButton type="submit">Edit</FormButton>
       </form>
+      {preview && (
+        <>
+          <p>preview</p>
+          <img src={preview} alt="preview img" width="30%" height="30%" />
+        </>
+      )}
     </>
   );
 };
