@@ -1,9 +1,11 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
+import HeaderLayout from "../components/templates/HeaderLayout";
 import { LoginUser } from "../components/templates/LoginUser";
 import { NotLoginUser } from "../components/templates/NotLoginUser";
 import { AuthProvider } from "../provider/AuthProvider";
-import "../styles/globals.css";
+import theme from "../theme/theme";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -13,7 +15,9 @@ function MyApp({ Component, pageProps }) {
       <AuthProvider>
         <LoginUser>
           <FormProvider {...methods}>
-            <Component {...pageProps} />
+            <ChakraProvider theme={theme}>
+              <Component {...pageProps} />
+            </ChakraProvider>
           </FormProvider>
         </LoginUser>
       </AuthProvider>
@@ -23,7 +27,11 @@ function MyApp({ Component, pageProps }) {
       <AuthProvider>
         <NotLoginUser>
           <FormProvider {...methods}>
-            <Component {...pageProps} />
+            <ChakraProvider theme={theme}>
+              <HeaderLayout>
+                <Component {...pageProps} />
+              </HeaderLayout>
+            </ChakraProvider>
           </FormProvider>
         </NotLoginUser>
       </AuthProvider>
