@@ -6,17 +6,12 @@ import { app } from "../firebase";
 
 const Home = () => {
   const auth = getAuth(app);
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    await router.replace("/Login");
-  };
+  const name = auth.currentUser.displayName;
 
   return (
     <>
       <h1>Home</h1>
-      <PrimaryButton children="logout" onClick={handleLogout} />
+      <div>Welcome to tweet-app{name}!!</div>
     </>
   );
 };
