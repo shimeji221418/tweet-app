@@ -35,7 +35,16 @@ const Users = () => {
         userList.map((user) => {
           return (
             <ul key={user.id}>
-              <li>{user.name}</li>
+              <li>
+                {user.name}
+                <img
+                  src={user.icon.url}
+                  alt="defaultImage"
+                  width="100px"
+                  height="100px"
+                  style={{ borderRadius: "50%" }}
+                />
+              </li>
             </ul>
           );
         })}

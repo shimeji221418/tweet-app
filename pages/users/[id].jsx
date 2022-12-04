@@ -41,16 +41,16 @@ const User = () => {
       const config = { headers: { authorization: `Bearer ${token}` } };
       const res = await deleteSelectUser(id, config);
       console.log(res.data);
-      await deleteCurrentUser();
-      router.push(`/users`);
+      deleteCurrentUser();
+      router.push(`/signUp`);
     } catch (e) {
       console.log(e);
     }
   };
 
   const deleteCurrentUser = async () => {
-    const user = auth.currentUser;
     try {
+      const user = auth.currentUser;
       await deleteUser(user);
     } catch (e) {
       console(e);
@@ -61,11 +61,14 @@ const User = () => {
     <>
       <h1>User</h1>
       {auth.currentUser.uid === selectUser.uid && (
-        <PrimaryButton
-          onClick={() => router.push(`/users/edit/${selectUser.id}`)}
-        >
-          update
-        </PrimaryButton>
+        <>
+          <PrimaryButton
+            onClick={() => router.push(`/users/edit/${selectUser.id}`)}
+          >
+            update
+          </PrimaryButton>
+          <PrimaryButton onClick={handleonDelete}>delete</PrimaryButton>
+        </>
       )}
       {loading ? (
         <p>Loading...</p>
@@ -81,7 +84,6 @@ const User = () => {
           </li>
         </ul>
       )}
-      <PrimaryButton onClick={handleonDelete}>delete</PrimaryButton>
     </>
   );
 };
