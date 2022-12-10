@@ -1,8 +1,20 @@
+import { AddIcon, InfoIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Input,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import FormButton from "../../components/atoms/button/FormButton";
+import PrimaryButton from "../../components/atoms/button/PrimaryButton";
 import InputForm from "../../components/atoms/InputForm";
 import TextArea from "../../components/atoms/TextArea";
 import { app } from "../../firebase";
@@ -99,32 +111,79 @@ const New = () => {
 
   return (
     <>
-      <h1>NewPost</h1>
       {!loading && (
-        <form onSubmit={handleSubmit(handleonSubmit)}>
-          <InputForm
-            title="title"
-            type="text"
-            handleChange={handleChange}
-            value={post.title}
-          />
-          {errors.title && <p>titleを入力してください</p>}
-          <TextArea
-            title="body"
-            handleChange={handleChange}
-            value={post.body}
-          />
-          {errors.body && <p>bodyを入力してください</p>}
-          <label htmlFor="image">image:</label>
-          <input id="image" name="image" type="file" onChange={uploadImage} />
-          <FormButton type="submit">submit</FormButton>
-        </form>
-      )}
-      {preview && (
-        <>
-          <p>preview</p>
-          <img src={preview} alt="preview img" width="30%" height="30%" />
-        </>
+        <Flex align="start" justify="center" h="100vh">
+          <Box w="lg" bg="white" borderRadius="md" shadow="lg" mt={4}>
+            <Stack spacing={6} px={10} pt={10} pb={2}>
+              <HStack align="center" justify="center" display="flex">
+                <AddIcon color="cyan.600" fontSize="2xl" />
+                <Heading
+                  as="h1"
+                  fontSize="5xl"
+                  color="cyan.600"
+                  textAlign="center"
+                >
+                  New Post
+                </Heading>
+              </HStack>
+              <form onSubmit={handleSubmit(handleonSubmit)}>
+                <Stack spacing={3}>
+                  <InputForm
+                    title="title"
+                    type="text"
+                    handleChange={handleChange}
+                  />
+                  {errors.title && <p>titleを入力してください</p>}
+                  <TextArea
+                    title="body"
+                    placeholder="投稿を入力してください"
+                    handleChange={handleChange}
+                  />
+                  {errors.body && <Text>投稿を入力してください</Text>}
+                  <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    variant="unstyled"
+                    onChange={uploadImage}
+                  />
+                  {preview && (
+                    <Box>
+                      <Text>preview</Text>
+                      <Image
+                        src={preview}
+                        alt="preview img"
+                        width="30%"
+                        height="30%"
+                      />
+                    </Box>
+                  )}
+                </Stack>
+                <Box
+                  mt={6}
+                  justifyContent="center"
+                  alignItems="center"
+                  display="flex"
+                >
+                  <FormButton type="submit">Post</FormButton>
+                  <PrimaryButton
+                    color="red"
+                    fontcolor="white"
+                    onClick={() => router.push("/posts")}
+                  >
+                    Back
+                  </PrimaryButton>
+                </Box>
+              </form>
+              <HStack textAlign="center">
+                <InfoIcon color="cyan.600" fontSize="md" />
+                <Text fontSize="md" color="gray.600">
+                  タイトル、本文を入力し投稿しましょう。写真も追加できます。
+                </Text>
+              </HStack>
+            </Stack>
+          </Box>
+        </Flex>
       )}
     </>
   );

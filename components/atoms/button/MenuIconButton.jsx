@@ -10,7 +10,7 @@ const MenuIconButton = (props) => {
       icon={<HamburgerIcon />}
       variant="solid"
       size="md"
-      display={{ base: "block", md: "none" }}
+      display={{ base: "block", lg: "none" }}
       onClick={onOpen}
     />
   );

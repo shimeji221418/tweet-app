@@ -1,3 +1,4 @@
+import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -5,9 +6,9 @@ const InputForm = (props) => {
   const { title, handleChange, type, value } = props;
   const { register } = useFormContext();
   return (
-    <div>
-      <label htmlFor={title}>{title}:</label>
-      <input
+    <InputGroup>
+      <InputLeftAddon children={title} bg="gray.500" color="white" />
+      <Input
         id={title}
         name={title}
         type={type}
@@ -19,8 +20,9 @@ const InputForm = (props) => {
             handleChange(e);
           },
         })}
+        bg="white"
       />
-    </div>
+    </InputGroup>
   );
 };
 

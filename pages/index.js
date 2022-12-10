@@ -6,12 +6,11 @@ import { app } from "../firebase";
 
 const Home = () => {
   const auth = getAuth(app);
-  const name = auth.currentUser.displayName;
 
   return (
     <>
       <h1>Home</h1>
-      <div>Welcome to tweet-app{name}!!</div>
+      <div>Welcome to tweet-app</div>
     </>
   );
 };

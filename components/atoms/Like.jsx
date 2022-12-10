@@ -3,6 +3,7 @@ import { countLike, createLike, deleteLike, getLike } from "../../lib/api/like";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as fasHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
+import { Box, Flex } from "@chakra-ui/react";
 
 const Like = (props) => {
   const { postId, userId } = props;
@@ -51,23 +52,23 @@ const Like = (props) => {
   return (
     <>
       {good ? (
-        <>
+        <Flex align="center">
           <FontAwesomeIcon
             icon={fasHeart}
             onClick={() => deleteGood(good.id)}
             style={{ color: "red", cursor: "pointer" }}
           />
-          {goodCount}
-        </>
+          <>{goodCount}</>
+        </Flex>
       ) : (
-        <>
+        <Flex align="center">
           <FontAwesomeIcon
             icon={farHeart}
             onClick={like}
             style={{ cursor: "pointer" }}
           />
-          {goodCount}
-        </>
+          <>{goodCount}</>
+        </Flex>
       )}
     </>
   );

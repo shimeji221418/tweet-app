@@ -1,3 +1,14 @@
+import {
+  Avatar,
+  Box,
+  Heading,
+  HStack,
+  Link,
+  Spacer,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { ThemeContext } from "@emotion/react";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -60,18 +71,38 @@ const Posts = () => {
 
   return (
     <>
-      <h1>Posts</h1>
-      {!loading &&
-        posts.map((post) => {
-          return (
-            <ul key={post.id}>
-              <li>
-                {post.title} by:{post.user.name}
-                {user.id && <Like postId={post.id} userId={user.id} />}
-              </li>
-            </ul>
-          );
-        })}
+      {!loading && (
+        <Stack align="center" mt={6}>
+          {posts.map((post) => (
+            <Box
+              key={post.id}
+              w="xl"
+              bg="white"
+              p={2}
+              borderRadius="md"
+              shadow="lg"
+            >
+              <HStack>
+                <Avatar src={post.user.icon.url} mr={3} />
+                <Stack>
+                  <Text as="u" color="cyan.600">
+                    <Link href={`/users/${post.user.id}`}>
+                      {post.user.name}
+                    </Link>
+                  </Text>
+                  <Box fontSize="lg" fontWeight="bold">
+                    <Link href={`/posts/${post.id}`}>{post.title}</Link>
+                  </Box>
+                </Stack>
+                <Spacer />
+                <Box>
+                  {user.id && <Like postId={post.id} userId={user.id} />}
+                </Box>
+              </HStack>
+            </Box>
+          ))}
+        </Stack>
+      )}
     </>
   );
 };

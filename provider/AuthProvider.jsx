@@ -1,3 +1,4 @@
+import { Box, Spinner } from "@chakra-ui/react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { app } from "../firebase";
@@ -29,7 +30,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return (
+      <Box textAlign="center" mt={20}>
+        <Spinner size="xl" thickness="50px" color="#00B5D8" />
+      </Box>
+    );
   } else {
     return (
       <AuthContext.Provider value={value}>
