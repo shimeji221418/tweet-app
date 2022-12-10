@@ -1,8 +1,20 @@
+import { EditIcon, InfoIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Input,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import FormButton from "../../../components/atoms/button/FormButton";
+import PrimaryButton from "../../../components/atoms/button/PrimaryButton";
 import InputForm from "../../../components/atoms/InputForm";
 import { app } from "../../../firebase";
 import { getSelectUser, updateUser } from "../../../lib/api/user";
@@ -98,25 +110,75 @@ const Edit = () => {
 
   return (
     <>
-      <h1>Edit</h1>
-      <form onSubmit={handleSubmit(handleonSubmit)}>
-        {!loading && (
-          <InputForm
-            title="name"
-            type="text"
-            value={editUser.name}
-            handleChange={handleChange}
-          />
-        )}
-        {errors.name && <p>nameを入力してください</p>}
-        <input id="icon" name="icon" type="file" onChange={uploadImage} />
-        <FormButton type="submit">Edit</FormButton>
-      </form>
-      {preview && (
-        <>
-          <p>preview</p>
-          <img src={preview} alt="preview img" width="30%" height="30%" />
-        </>
+      {!loading && (
+        <Flex align="start" justify="center" h="100vh">
+          <Box w="lg" bg="white" borderRadius="md" shadow="lg" mt={4}>
+            <Stack spacing={8} px={10} pt={10} pb={2}>
+              <HStack align="center" justify="center" display="flex">
+                <Heading
+                  as="h1"
+                  fontSize="5xl"
+                  color="cyan.600"
+                  textAlign="center"
+                >
+                  Edit User
+                </Heading>
+                <EditIcon color="cyan.600" fontSize="xl" />
+              </HStack>
+              <form onSubmit={handleSubmit(handleonSubmit)}>
+                <Stack spacing={5}>
+                  <InputForm
+                    title="name"
+                    type="text"
+                    value={editUser.name}
+                    handleChange={handleChange}
+                  />
+                  {errors.name && <Text>nameを入力してください</Text>}
+                  <Input
+                    id="icon"
+                    name="icon"
+                    type="file"
+                    variant="unstyled"
+                    onChange={uploadImage}
+                  />
+                  {preview && (
+                    <Box>
+                      <Text>preview</Text>
+                      <Image
+                        src={preview}
+                        alt="preview img"
+                        width="100px"
+                        height="100px"
+                        borderRadius="full"
+                      />
+                    </Box>
+                  )}
+                </Stack>
+                <Box
+                  mt={6}
+                  justifyContent="center"
+                  alignItems="center"
+                  display="flex"
+                >
+                  <PrimaryButton
+                    color="red"
+                    fontcolor="white"
+                    onClick={() => router.push("/users")}
+                  >
+                    Back
+                  </PrimaryButton>
+                  <FormButton type="submit">Edit</FormButton>
+                </Box>
+              </form>
+              <HStack textAlign="center">
+                <InfoIcon color="cyan.600" fontSize="md" />
+                <Text fontSize="md" color="gray.600">
+                  ユーザー名、アイコンを入力し編集を行ってください。
+                </Text>
+              </HStack>
+            </Stack>
+          </Box>
+        </Flex>
       )}
     </>
   );

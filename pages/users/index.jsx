@@ -1,6 +1,8 @@
+import { Heading, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import UserCard from "../../components/organisms/UserCard";
 import { app } from "../../firebase";
 import { getUsers } from "../../lib/api/user";
 
@@ -30,24 +32,19 @@ const Users = () => {
 
   return (
     <>
-      <h1>Users</h1>
-      {!loading &&
-        userList.map((user) => {
-          return (
-            <ul key={user.id}>
-              <li>
-                {user.name}
-                <img
-                  src={user.icon.url}
-                  alt="defaultImage"
-                  width="100px"
-                  height="100px"
-                  style={{ borderRadius: "50%" }}
-                />
-              </li>
-            </ul>
-          );
-        })}
+      {!loading && (
+        <Wrap m={5} spacing={5}>
+          {userList.map((user) => (
+            <WrapItem key={user.id}>
+              <UserCard
+                imageUrl={user.icon.url}
+                userName={user.name}
+                id={user.id}
+              />
+            </WrapItem>
+          ))}
+        </Wrap>
+      )}
     </>
   );
 };

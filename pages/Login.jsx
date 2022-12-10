@@ -1,3 +1,13 @@
+import { InfoIcon, LockIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -44,19 +54,60 @@ const Login = () => {
   };
   return (
     <>
-      <h1>Login</h1>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit(handleonSubmit)}>
-        <InputForm title="email" type="text" handleChange={handleChange} />
-        {errors.email && <p>emailを入力してください</p>}
-        <InputForm
-          title="password"
-          type="password"
-          handleChange={handleChange}
-        />
-        {errors.password && <p>passwordを入力してください</p>}
-        <FormButton type="submit">Login</FormButton>
-      </form>
+      <Flex align="center" justify="center" h="100vh">
+        <Box w="lg" bg="white" borderRadius="md" shadow="md">
+          <Stack spacing={8} px={10} pt={10} pb={2}>
+            <HStack justify="center">
+              <Heading as="h1" fontSize="5xl" color="cyan.600">
+                Tweet-up
+              </Heading>
+              <LockIcon color="cyan.600" fontSize="4xl" />
+            </HStack>
+            {error && <Text>{error}</Text>}
+            <form onSubmit={handleSubmit(handleonSubmit)}>
+              <Stack spacing={2}>
+                <InputForm
+                  title="email"
+                  type="text"
+                  handleChange={handleChange}
+                />
+                {errors.email && <Text>emailを入力してください</Text>}
+                <InputForm
+                  title="password"
+                  type="password"
+                  handleChange={handleChange}
+                />
+              </Stack>
+              {errors.password && <Text>passwordを入力してください</Text>}
+              <Box
+                mt={6}
+                justifyContent="center"
+                alignItems="center"
+                display="flex"
+              >
+                <FormButton type="submit" size="lg">
+                  Login
+                </FormButton>
+              </Box>
+            </form>
+            <HStack>
+              <InfoIcon color="cyan.600" fontSize="md" />
+              <Text fontSize="lg" color="gray.600">
+                ユーザー登録が済んでいない方は
+                <Link
+                  color="cyan.400"
+                  fontSize="xl"
+                  fontWeight="bold"
+                  href="/signUp"
+                >
+                  こちら
+                </Link>
+                から
+              </Text>
+            </HStack>
+          </Stack>
+        </Box>
+      </Flex>
     </>
   );
 };
